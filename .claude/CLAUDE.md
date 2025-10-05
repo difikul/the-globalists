@@ -5,7 +5,7 @@
 **Název:** The Globalists
 **Typ:** B2B/B2C Marketplace pro mezinárodní služby
 **GitHub:** https://github.com/difikul/the-globalists
-**Stav:** Phase 1 - Foundation ✅ DOKONČENO
+**Stav:** Phase 2 - Core Features (Part 1) ✅ DOKONČENO
 
 ## 🎯 O projektu
 
@@ -99,14 +99,19 @@ Customer: customer@example.com      / customer123
 - [x] Seed script s test daty
 - [x] Git repository setup
 
-## 📝 Phase 2 - Core Features (TODO)
+## 📝 Phase 2 - Core Features (Part 1) (DOKONČENO)
 
-- [ ] Service CRUD s validací
-- [ ] Category pages + filtry
-- [ ] Search funkcionalita
-- [ ] Service detail page
-- [ ] Provider profile + dashboard
-- [ ] Review system
+- [x] Provider dashboard layout
+- [x] Dashboard overview (provider & customer stats)
+- [x] Service CRUD - Create s validací
+- [x] Service CRUD - List služeb
+- [x] Category pages pro procházení služeb
+- [x] Service detail page s reviews
+- [x] API endpoints (/api/services)
+- [x] Auth middleware pro ochranu routes
+- [ ] Service CRUD - Edit/Delete (TODO)
+- [ ] Search funkcionalita (TODO)
+- [ ] Review creation form (TODO)
 
 ## 📁 Struktura projektu
 

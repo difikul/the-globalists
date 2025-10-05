@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { ReviewForm } from "@/components/review-form"
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -61,6 +62,34 @@ export default async function ServiceDetailPage({ params }: Props) {
     service.reviews.length > 0
       ? service.reviews.reduce((sum, r) => sum + r.rating, 0) / service.reviews.length
       : 0
+
+  // Check if user purchased this service and can leave a review
+  let canReview = false
+  let hasPurchased = false
+  let hasReviewed = false
+
+  if (session && session.user.role === "CUSTOMER") {
+    const purchase = await prisma.transaction.findFirst({
+      where: {
+        buyerId: session.user.id,
+        serviceId: service.id,
+      },
+    })
+
+    hasPurchased = !!purchase
+
+    if (hasPurchased) {
+      const existingReview = await prisma.review.findFirst({
+        where: {
+          userId: session.user.id,
+          serviceId: service.id,
+        },
+      })
+
+      hasReviewed = !!existingReview
+      canReview = !hasReviewed
+    }
+  }
 
   return (
     <div className="container py-12">
@@ -169,6 +198,11 @@ export default async function ServiceDetailPage({ params }: Props) {
                 </ul>
               </CardContent>
             </Card>
+          )}
+
+          {/* Review Form - Only show to customers who purchased but haven't reviewed */}
+          {canReview && (
+            <ReviewForm serviceId={service.id} />
           )}
 
           {/* Reviews */}

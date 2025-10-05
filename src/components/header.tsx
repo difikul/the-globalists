@@ -1,11 +1,24 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 export function Header() {
   const { data: session, status } = useSession()
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+      setSearchQuery("")
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -17,10 +30,10 @@ export function Header() {
 
           <nav className="hidden md:flex gap-6">
             <Link
-              href="/services"
+              href="/search"
               className="flex items-center text-sm font-medium transition-colors hover:text-primary"
             >
-              Služby
+              Vyhledávání
             </Link>
             <Link
               href="/services/citizenship"
@@ -44,6 +57,15 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-4">
+          <form onSubmit={handleSearch} className="hidden lg:block">
+            <Input
+              type="search"
+              placeholder="Hledat služby..."
+              className="w-64"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </form>
           {status === "loading" ? (
             <div className="h-9 w-20 animate-pulse rounded-md bg-muted" />
           ) : session ? (

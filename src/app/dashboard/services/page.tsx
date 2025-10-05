@@ -100,7 +100,7 @@ export default async function ServicesPage() {
                   </span>
                 </div>
                 <div className="mt-4 flex gap-2">
-                  <Link href={`/services/${service.slug}`}>
+                  <Link href={`/service/${service.slug}`}>
                     <Button variant="outline" size="sm">
                       Náhled
                     </Button>
@@ -110,11 +110,6 @@ export default async function ServicesPage() {
                       Upravit
                     </Button>
                   </Link>
-                  {service.status === "DRAFT" && (
-                    <Button variant="default" size="sm">
-                      Publikovat
-                    </Button>
-                  )}
                 </div>
               </CardContent>
             </Card>
