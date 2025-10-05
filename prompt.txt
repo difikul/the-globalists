@@ -1,0 +1,313 @@
+# The Globalists - Interactive MVP Build
+
+## 🎯 Mission
+Build a B2B/B2C marketplace for international services (Citizenships, Residencies, Company Incorporation, Banking, Insurance, Shipping) with commission-based monetization.
+
+**Business Model:**
+- Free: 10% commission
+- Verified ($100/mo): 5% commission + badge
+- Promo ($300): Pin service to top for 30 days
+
+## 🛠 Tech Stack
+- **Frontend:** Next.js 15, TypeScript, Tailwind, Shadcn/ui, TanStack Query, Zustand
+- **Backend:** Next.js API Routes, Prisma, PostgreSQL, Redis
+- **Auth:** NextAuth.js v5
+- **Payments:** Stripe Connect
+- **Email:** Resend
+- **Infrastructure:** Docker Compose
+
+**MCP Servers Available:**
+- Stripe MCP: `@stripe/mcp` - Payment testing
+- Prisma MCP: `prisma mcp` - Database management
+- Redis MCP: `@modelcontextprotocol/server-redis` - Cache ops
+- Resend MCP: Email testing
+- Git MCP: Version control
+
+## 📊 Core Database Schema
+
+```prisma
+User (id, email, role: CUSTOMER|PROVIDER|ADMIN)
+Provider (userId, companyName, subscriptionPlan, commissionRate, verificationStatus)
+Service (providerId, category, title, price, country, isPromoted, status)
+Transaction (serviceId, buyerId, sellerId, amount, commissionAmount, stripePaymentIntentId)
+Subscription (providerId, plan, stripeSubscriptionId, status)
+Promotion (serviceId, category, pricePaid, expiresAt)
+Review (serviceId, userId, rating, comment)
+
+Categories: CITIZENSHIP | RESIDENCY | COMPANY_INCORPORATION | BANKING | INSURANCE | SHIPPING
+```
+
+## 🚨 INTERACTIVE MODE RULES
+
+**YOU MUST:**
+1. **PAUSE at every checkpoint** and wait for user input
+2. **Ask before creating accounts** - guide user through signup
+3. **Request credentials step-by-step** - never assume they exist
+4. **Validate inputs** before using them
+5. **Explain WHY** you need something
+6. **Show progress** after major steps
+7. **Handle errors gracefully** - help troubleshoot
+8. **Let user take breaks** - save progress frequently
+
+**CHECKPOINT FORMAT:**
+```
+🛑 CHECKPOINT [N]: [Name]
+━━━━━━━━━━━━━━━━━━━━━━
+Need: [What you need]
+Why: [Brief reason]
+How: [Where to get it - URL if applicable]
+Format: [Expected format]
+━━━━━━━━━━━━━━━━━━━━━━
+[Wait for user input]
+```
+
+**When user provides input:**
+- Validate format
+- Confirm what you received (first/last chars only for keys)
+- Show what you'll do next
+- Do it, then report results
+
+**If something fails:**
+- State the error clearly
+- List 2-3 common causes
+- Ask diagnostic questions
+- Provide fix steps
+
+## 📋 Development Phases with Checkpoints
+
+### Phase 1: Foundation (Days 1-3)
+
+**🛑 CHECKPOINT 1: Environment**
+```
+Check:
+- Node.js 20+ installed?
+- Docker installed & running?
+- Code editor ready?
+
+[Guide installation if needed]
+```
+
+**🛑 CHECKPOINT 2: Database Setup**
+```
+Need: PostgreSQL credentials
+Default: postgres/[user-chosen-password]/globalists
+Format: DATABASE_URL=postgresql://user:pass@localhost:5432/dbname
+```
+
+**🛑 CHECKPOINT 3: NextAuth Secret**
+```
+Need: Secure random string
+How: Run `openssl rand -base64 32`
+Format: NEXTAUTH_SECRET=[output]
+```
+
+**Build:**
+- Initialize Next.js project
+- Docker Compose (PostgreSQL + Redis)
+- Prisma schema & migrations
+- NextAuth setup
+- Basic UI layout
+- MCP configuration
+
+### Phase 2: Core Features (Days 4-7)
+
+**Build:**
+- Service CRUD with validation
+- Category pages + filters
+- Search functionality
+- Service detail page
+- Provider profile + dashboard
+- Review system
+
+### Phase 3: Payments (Days 8-10)
+
+**🛑 CHECKPOINT 4: Stripe**
+```
+Need: Stripe account + API keys
+Steps:
+1. Sign up: https://dashboard.stripe.com/register
+2. Get keys: https://dashboard.stripe.com/test/apikeys
+3. Enable Connect: https://dashboard.stripe.com/settings/connect
+4. Create webhook: http://localhost:3000/api/webhooks/stripe
+
+Provide:
+STRIPE_PUBLIC_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+**Build:**
+- Stripe Connect integration
+- Provider onboarding flow
+- Service checkout
+- Webhook handling
+- Commission splitting
+- Subscription billing
+- Promotion purchase
+
+### Phase 4: Polish (Days 11-14)
+
+**🛑 CHECKPOINT 5: Resend**
+```
+Need: Resend account + API key
+Steps:
+1. Sign up: https://resend.com/signup
+2. Get key: https://resend.com/api-keys
+3. Verify domain (optional for dev)
+
+Provide:
+RESEND_API_KEY=re_...
+FROM_EMAIL=onboarding@resend.dev
+```
+
+**Build:**
+- Homepage with hero
+- Responsive design
+- Loading states
+- Email notifications
+- SEO meta tags
+- Redis caching
+- Testing
+
+**🛑 CHECKPOINT 6: Pre-Launch**
+```
+Verify:
+- All tests passing?
+- Payments working?
+- Emails sending?
+
+Production:
+- Domain name?
+- Hosting choice? (Vercel/Railway/Other)
+- Database? (Neon/Supabase/Other)
+```
+
+## 🎯 Key Features to Implement
+
+**Homepage:**
+- Hero with search (category + country filters)
+- 6 category cards
+- Featured services
+- Trust indicators
+
+**Service Browsing:**
+- Filters: country, price, rating, verified
+- Sort: relevance, price, rating, date
+- Promoted services at top (highlighted)
+- 12 per page
+
+**Provider Dashboard:**
+- Overview stats
+- Service management (CRUD)
+- Subscription upgrade
+- Analytics
+- Promotion purchase
+
+**Payment Flow:**
+- Stripe Connect onboarding
+- Service purchase checkout
+- Auto commission split (5-10%)
+- Subscription billing
+- Promotion one-time payment
+- Webhook processing
+
+## 🏗️ Project Structure
+
+```
+/src
+  /app
+    /(auth) - Login, register pages
+    /(marketing) - Public pages
+    /(dashboard) - Provider area
+    /api - API routes + webhooks
+  /components - React components
+  /lib - Utils & helpers
+  /server - Server code
+/prisma - Schema & migrations
+/docker - Docker config
+```
+
+## 📝 Environment Variables Template
+
+```env
+# Database
+DATABASE_URL=postgresql://...
+REDIS_URL=redis://localhost:6379
+
+# Auth
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=http://localhost:3000
+
+# Stripe
+STRIPE_PUBLIC_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+
+# Email
+RESEND_API_KEY=
+FROM_EMAIL=
+```
+
+## ✅ MVP Success Criteria
+
+Must work:
+- User registration/login
+- Provider profile creation
+- Service posting
+- Search & filters
+- Promoted services pinned
+- Payment checkout
+- Commission splits correctly
+- Subscription billing
+- Verified badge display
+- Mobile responsive
+
+## 🚀 Execution Instructions
+
+**Start by:**
+1. Greeting user, ask their name
+2. Check environment (Node, Docker, Git)
+3. Ask about experience level
+4. Estimate timeline based on availability
+5. Begin Phase 1, Checkpoint 1
+
+**Throughout development:**
+- Use MCP tools when available
+- Commit with conventional commits
+- Test features after building
+- Show progress regularly
+- Ask before major decisions
+- Pause at every checkpoint
+- Save progress frequently
+
+**Communication style:**
+- Clear and friendly
+- Explain technical terms
+- Provide direct links
+- Validate all inputs
+- Celebrate milestones
+- Offer help when stuck
+- Adapt to user's pace
+
+**For credentials:**
+- Never assume they exist
+- Guide signup if needed
+- Validate format
+- Store in .env.local
+- Confirm security practices
+
+**When errors occur:**
+- State problem clearly
+- List likely causes
+- Ask diagnostic questions
+- Provide fix steps
+- Test after fixing
+
+**Session management:**
+- Create DEVELOPMENT_LOG.md
+- Document progress
+- Note what to resume
+- Save all credentials used
+- Provide restart commands
+
+Now begin! Greet the user and start the interactive build process.
