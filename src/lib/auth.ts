@@ -1,12 +1,13 @@
-import { NextAuthOptions } from "next-auth"
+import NextAuth from "next-auth"
+import type { NextAuthConfig } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "./prisma"
 import bcrypt from "bcryptjs"
-import { UserRole } from "@prisma/client"
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
+export const authOptions = {
+  adapter: PrismaAdapter(prisma),
+  trustHost: true, // Allow API calls in development
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -39,7 +40,7 @@ export const authOptions: NextAuthOptions = {
 
         return {
           id: user.id,
-          email: user.email,
+          email: user.email!,
           name: user.name,
           role: user.role,
           image: user.image,
@@ -68,7 +69,9 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/error",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
   },
   secret: process.env.NEXTAUTH_SECRET,
-}
+} satisfies NextAuthConfig
+
+export const { handlers, auth, signIn, signOut } = NextAuth(authOptions)

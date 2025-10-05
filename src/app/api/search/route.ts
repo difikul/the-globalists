@@ -12,13 +12,13 @@ export async function GET(request: Request) {
 
     const where: any = {
       status: "PUBLISHED",
-      OR: query
-        ? [
-            { title: { contains: query, mode: "insensitive" } },
-            { description: { contains: query, mode: "insensitive" } },
-            { country: { contains: query, mode: "insensitive" } },
-          ]
-        : undefined,
+      ...(query && {
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+          { country: { contains: query, mode: "insensitive" } },
+        ],
+      }),
     }
 
     if (category) {

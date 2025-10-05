@@ -1,13 +1,12 @@
 import { redirect } from "next/navigation"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default async function ServicesPage() {
-  const session = await getServerSession(authOptions)
+  const session = await auth()
 
   if (!session || (session.user.role !== "PROVIDER" && session.user.role !== "ADMIN")) {
     redirect("/dashboard")

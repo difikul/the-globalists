@@ -3,8 +3,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { ReviewForm } from "@/components/review-form"
 
 interface Props {
@@ -14,7 +13,7 @@ interface Props {
 export default async function ServiceDetailPage({ params }: Props) {
   const resolvedParams = await params
   const { slug } = resolvedParams
-  const session = await getServerSession(authOptions)
+  const session = await auth()
 
   const service = await prisma.service.findUnique({
     where: { slug, status: "PUBLISHED" },

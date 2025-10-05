@@ -53,15 +53,28 @@ export async function POST(request: NextRequest) {
     )
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error("[Registration] Validation error:", error.errors)
       return NextResponse.json(
-        { error: error.errors[0].message },
+        { error: error.errors[0].message, details: error.errors },
         { status: 400 }
       )
     }
 
-    console.error("Registration error:", error)
+    // Enhanced error logging
+    console.error("[Registration] Unexpected error:", {
+      error,
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+    })
+
     return NextResponse.json(
-      { error: "Došlo k chybě při registraci" },
+      {
+        error: "Došlo k chybě při registraci",
+        ...(process.env.NODE_ENV === 'development' && {
+          debug: error instanceof Error ? error.message : String(error)
+        })
+      },
       { status: 500 }
     )
   }
